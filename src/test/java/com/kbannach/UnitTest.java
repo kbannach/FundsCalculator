@@ -1,8 +1,11 @@
 package com.kbannach;
 
-import org.junit.runner.RunWith;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.junit.Rule;
+import org.mockito.junit.MockitoJUnit;
+import org.mockito.junit.MockitoRule;
 
-@RunWith(MockitoJUnitRunner.class)
 public class UnitTest {
+
+    @Rule
+    public MockitoRule mockitoRule = MockitoJUnit.rule();
 }
