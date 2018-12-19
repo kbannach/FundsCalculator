@@ -1,4 +1,4 @@
-package com.kbannach.funds.calculator.service.corrector;
+package com.kbannach.funds.calculator.service.percentage.corrector;
 
 import com.kbannach.funds.calculator.api.CalculationResult;
 

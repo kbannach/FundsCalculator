@@ -3,7 +3,7 @@ package com.kbannach.funds.calculator.service;
 import com.kbannach.UnitTest;
 import com.kbannach.funds.calculator.api.CalculationResult;
 import com.kbannach.funds.calculator.entity.Fund;
-import com.kbannach.funds.calculator.service.corrector.OneElementCorrectingPercentageCorrector;
+import com.kbannach.funds.calculator.service.percentage.corrector.OneElementCorrectingPercentageCorrector;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
