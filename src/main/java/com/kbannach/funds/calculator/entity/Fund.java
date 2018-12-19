@@ -3,12 +3,14 @@ package com.kbannach.funds.calculator.entity;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 @Getter
 @Setter
 @EqualsAndHashCode(of = {"name", "kind"})
+@ToString
 public class Fund {
 
     public enum Kind {
