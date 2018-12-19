@@ -3,7 +3,7 @@ package com.kbannach.funds.calculator.service;
 import com.kbannach.UnitTest;
 import com.kbannach.funds.calculator.api.CalculationResult;
 import com.kbannach.funds.calculator.entity.Fund;
-import com.kbannach.funds.calculator.service.corrector.PercentageCorrector;
+import com.kbannach.funds.calculator.service.corrector.OneElementCorrectingPercentageCorrector;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -13,14 +13,14 @@ import java.util.Map;
 import static com.kbannach.funds.calculator.utils.ConversionUtils.toBigDecimal;
 import static org.junit.Assert.assertTrue;
 
-public class PercentageCorrectorTest extends UnitTest {
+public class OneElementCorrectingPercentageCorrectorTest extends UnitTest {
 
     private static final Fund FIRST_FUND = new Fund("first", Fund.Kind.PL);
     private static final Fund SECOND_FUND = new Fund("second", Fund.Kind.PL);
     private static final Fund THIRD_FUND = new Fund("third", Fund.Kind.PL);
 
     @InjectMocks
-    private PercentageCorrector percentageCorrector;
+    private OneElementCorrectingPercentageCorrector percentageCorrector;
 
     @Test
     public void correctPercentageGivenCorrectionNotNeededThenNoCorrection() {
