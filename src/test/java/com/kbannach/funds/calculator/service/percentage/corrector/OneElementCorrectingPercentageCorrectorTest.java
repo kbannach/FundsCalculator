@@ -4,6 +4,7 @@ import com.kbannach.UnitTest;
 import com.kbannach.funds.calculator.api.CalculationResult;
 import com.kbannach.funds.calculator.entity.Fund;
 import com.kbannach.funds.calculator.service.percentage.corrector.OneElementCorrectingPercentageCorrector;
+import com.kbannach.funds.calculator.service.percentage.corrector.PercentageSumExceededException;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
@@ -11,7 +12,6 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import static com.kbannach.funds.calculator.utils.ConversionUtils.toBigDecimal;
-import static org.junit.Assert.assertTrue;
 
 public class OneElementCorrectingPercentageCorrectorTest extends UnitTest {
 
@@ -20,7 +20,16 @@ public class OneElementCorrectingPercentageCorrectorTest extends UnitTest {
     private static final Fund THIRD_FUND = new Fund("third", Fund.Kind.PL);
 
     @InjectMocks
-    private OneElementCorrectingPercentageCorrector percentageCorrector;
+    private OneElementCorrectingPercentageCorrector oneElementCorrectingPercentageCorrector;
+
+    @Test(expected = PercentageSumExceededException.class)
+    public void correctPercentageGivenSumUpToHigherThanPercentageSumThenException() {
+        // given
+        BigDecimal sumUpTo = toBigDecimal("15");
+        BigDecimal fundPercentage = toBigDecimal("5.01");
+
+        performTest(sumUpTo, fundPercentage);
+    }
 
     @Test
     public void correctPercentageGivenCorrectionNotNeededThenNoCorrection() {
@@ -48,7 +57,7 @@ public class OneElementCorrectingPercentageCorrectorTest extends UnitTest {
         toCorrect.addFundCalculation(THIRD_FUND, fundPercentage);
 
         // when
-        percentageCorrector.correctPercentage(toCorrect, sumUpTo);
+        oneElementCorrectingPercentageCorrector.correctPercentage(toCorrect, sumUpTo);
 
         // then
         Map<Fund, CalculationResult.FundCalculationResult> results = toCorrect.getFundCalculationResults();
@@ -60,6 +69,6 @@ public class OneElementCorrectingPercentageCorrectorTest extends UnitTest {
                         BigDecimal::add
                 );
 
-        assertTrue(total.compareTo(sumUpTo) == 0);
+        assertBigDecimalValues(total, sumUpTo);
     }
 }

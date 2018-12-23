@@ -2,7 +2,7 @@ package com.kbannach.funds.calculator.service.percentage.corrector;
 
 import java.math.BigDecimal;
 
-class PercentageSumExceededException extends RuntimeException {
+public class PercentageSumExceededException extends RuntimeException {
 
     static PercentageSumExceededException create(BigDecimal sumUpTo, BigDecimal sum) {
 

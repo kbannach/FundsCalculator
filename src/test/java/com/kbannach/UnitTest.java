@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 
 import static org.junit.Assert.assertTrue;
 
-public class UnitTest {
+public abstract class UnitTest {
 
     @Rule
     public MockitoRule mockitoRule = MockitoJUnit.rule();
