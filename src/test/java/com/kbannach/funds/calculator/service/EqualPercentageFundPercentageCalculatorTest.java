@@ -11,6 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.kbannach.funds.calculator.utils.ConversionUtils.toBigDecimal;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.not;
 import static org.hamcrest.core.Every.everyItem;
@@ -43,8 +45,11 @@ public class EqualPercentageFundPercentageCalculatorTest extends UnitTest {
 
     @Test(expected = NullPointerException.class)
     public void calculateByFundsKindGivenNullKindThenNPE() {
+        // given
+        Fund fund = createFund("plFirst", Fund.Kind.PL);
+
         // when
-        equalPercentageFundPercentageCalculator.calculateByFundsKind(Collections.emptySet(), null, STYLE_DEFINITION);
+        equalPercentageFundPercentageCalculator.calculateByFundsKind(Collections.singleton(fund), null, STYLE_DEFINITION);
     }
 
     @Test
@@ -81,13 +86,14 @@ public class EqualPercentageFundPercentageCalculatorTest extends UnitTest {
     @Test
     public void calculateByFundsKindGivenKindThenEveryFundHasEqualPercentage() {
         // given
-        Fund plFirst = createFund("plFirst", Fund.Kind.PL);
-        Fund plSecond = createFund("plSecond", Fund.Kind.PL);
-        Fund plThird = createFund("plThird", Fund.Kind.PL);
+        Fund.Kind kind = Fund.Kind.PL;
+        Fund plFirst = createFund("plFirst", kind);
+        Fund plSecond = createFund("plSecond", kind);
+        Fund plThird = createFund("plThird", kind);
         HashSet<Fund> funds = new HashSet<>(Arrays.asList(plFirst, plSecond, plThird));
 
         // when
-        CalculationResult calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, Fund.Kind.PL, STYLE_DEFINITION);
+        CalculationResult calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, kind, STYLE_DEFINITION);
 
         // then
         List<BigDecimal> percentages = calculationResult.getFundCalculationResults()
@@ -98,6 +104,17 @@ public class EqualPercentageFundPercentageCalculatorTest extends UnitTest {
         BigDecimal p = percentages.get(0);
 
         assertThat(percentages, everyItem(is(p)));
+
+        BigDecimal actualSum = percentages.stream()
+                .reduce(BigDecimal.ZERO,
+                        BigDecimal::add,
+                        BigDecimal::add);
+
+        BigDecimal expectedTotalPercentage = STYLE_DEFINITION.getTotalPercentageByKind(kind);
+        BigDecimal divisor = toBigDecimal(3);
+        expectedTotalPercentage = expectedTotalPercentage.divide(divisor, RoundingMode.DOWN).multiply(divisor);
+
+        assertBigDecimalValues(expectedTotalPercentage, actualSum);
     }
 
     private Fund createFund(String name, Fund.Kind kind) {

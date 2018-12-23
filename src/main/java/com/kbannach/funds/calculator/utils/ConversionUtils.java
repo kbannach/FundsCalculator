@@ -5,18 +5,31 @@ import java.math.RoundingMode;
 
 public abstract class ConversionUtils {
 
+    private static final int DEFAULT_PRECISION = 2;
+    public static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.DOWN;
+
     private ConversionUtils() {
     }
 
     public static BigDecimal toBigDecimal(int value) {
-        return new BigDecimal(value);
+        BigDecimal bigDecimal = new BigDecimal(value);
+        return round(bigDecimal);
+    }
+
+    public static BigDecimal toBigDecimal(int value, int precision, RoundingMode roundingMode) {
+        return new BigDecimal(value).setScale(precision, roundingMode);
     }
 
     public static BigDecimal toBigDecimal(String value) {
-        return new BigDecimal(value);
+        BigDecimal bigDecimal = new BigDecimal(value);
+        return round(bigDecimal);
     }
 
-    public static BigDecimal roundPercentage(BigDecimal percentageToRound) {
-        return percentageToRound.setScale(2, RoundingMode.HALF_DOWN);
+    public static BigDecimal toBigDecimal(String value, int precision, RoundingMode roundingMode) {
+        return new BigDecimal(value).setScale(precision, roundingMode);
+    }
+
+    public static BigDecimal round(BigDecimal percentageToRound) {
+        return percentageToRound.setScale(DEFAULT_PRECISION, DEFAULT_ROUNDING_MODE);
     }
 }

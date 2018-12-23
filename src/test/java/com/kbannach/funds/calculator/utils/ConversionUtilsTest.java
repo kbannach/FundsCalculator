@@ -6,7 +6,6 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class ConversionUtilsTest extends UnitTest {
 
@@ -19,7 +18,7 @@ public class ConversionUtilsTest extends UnitTest {
         BigDecimal actual = ConversionUtils.toBigDecimal(toConvert);
 
         // then
-        assertTrue(BigDecimal.ONE.compareTo(actual) == 0);
+        assertBigDecimalValues(BigDecimal.ONE, actual);
     }
 
     @Test
@@ -31,20 +30,7 @@ public class ConversionUtilsTest extends UnitTest {
         BigDecimal actual = ConversionUtils.toBigDecimal(toConvert);
 
         // then
-        assertTrue(BigDecimal.ONE.compareTo(actual) == 0);
-    }
-
-    @Test
-    public void toBigDecimalGivenComplexString() {
-        // given
-        String toConvert = "-1.23E-12";
-        BigDecimal expected = new BigDecimal("-1.23E-12");
-
-        // when
-        BigDecimal actual = ConversionUtils.toBigDecimal(toConvert);
-
-        // then
-        assertTrue(expected.compareTo(actual) == 0);
+        assertBigDecimalValues(BigDecimal.ONE, actual);
     }
 
     @Test(expected = NumberFormatException.class)
@@ -68,7 +54,7 @@ public class ConversionUtilsTest extends UnitTest {
         BigDecimal rounded = new BigDecimal("0.12");
 
         // when
-        BigDecimal actual = ConversionUtils.roundPercentage(rounded);
+        BigDecimal actual = ConversionUtils.round(rounded);
 
         // then
         assertEquals(rounded, actual);
@@ -81,7 +67,7 @@ public class ConversionUtilsTest extends UnitTest {
         BigDecimal toRound = new BigDecimal("0.12345");
 
         // when
-        BigDecimal actual = ConversionUtils.roundPercentage(toRound);
+        BigDecimal actual = ConversionUtils.round(toRound);
 
         // then
         assertEquals(expected, actual);
@@ -94,7 +80,7 @@ public class ConversionUtilsTest extends UnitTest {
         BigDecimal expected = new BigDecimal("1.00");
 
         // when
-        BigDecimal actual = ConversionUtils.roundPercentage(toRound);
+        BigDecimal actual = ConversionUtils.round(toRound);
 
         // then
         assertEquals(expected, actual);
@@ -103,6 +89,6 @@ public class ConversionUtilsTest extends UnitTest {
     @Test(expected = NullPointerException.class)
     public void roundPercentageGivenNullThenNPE() {
         // when
-        ConversionUtils.roundPercentage(null);
+        ConversionUtils.round(null);
     }
 }

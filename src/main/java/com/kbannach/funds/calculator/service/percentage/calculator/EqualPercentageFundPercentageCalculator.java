@@ -7,11 +7,11 @@ import com.kbannach.funds.calculator.service.percentage.corrector.PercentageCorr
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.kbannach.funds.calculator.utils.ConversionUtils.roundPercentage;
+import static com.kbannach.funds.calculator.utils.ConversionUtils.DEFAULT_ROUNDING_MODE;
+import static com.kbannach.funds.calculator.utils.ConversionUtils.round;
 import static com.kbannach.funds.calculator.utils.ConversionUtils.toBigDecimal;
 
 @AllArgsConstructor
@@ -21,13 +21,13 @@ public class EqualPercentageFundPercentageCalculator implements FundPercentageCa
 
     public CalculationResult calculateByFundsKind(Set<Fund> allFunds, Fund.Kind kind, InvestmentStyleDefinition styleDefinition) {
 
-        CalculationResult result = new CalculationResult();
-        BigDecimal totalPercentage = styleDefinition.getTotalPercentageByKind(kind);
-
         Set<Fund> fundsByKind = findFundsByKind(allFunds, kind);
         if (fundsByKind.isEmpty()) {
             return new CalculationResult();
         }
+
+        CalculationResult result = new CalculationResult();
+        BigDecimal totalPercentage = styleDefinition.getTotalPercentageByKind(kind);
 
         BigDecimal equalPercentage = calculatePercentageToSet(fundsByKind.size(), totalPercentage);
         fundsByKind.forEach(f -> result.addFundCalculation(f, equalPercentage));
@@ -46,7 +46,7 @@ public class EqualPercentageFundPercentageCalculator implements FundPercentageCa
     private BigDecimal calculatePercentageToSet(int fundsCount, BigDecimal totalPercentage) {
 
         BigDecimal divisor = toBigDecimal(fundsCount);
-        BigDecimal percentage = totalPercentage.divide(divisor, RoundingMode.HALF_DOWN);
-        return roundPercentage(percentage);
+        BigDecimal percentage = totalPercentage.divide(divisor, DEFAULT_ROUNDING_MODE);
+        return round(percentage);
     }
 }
