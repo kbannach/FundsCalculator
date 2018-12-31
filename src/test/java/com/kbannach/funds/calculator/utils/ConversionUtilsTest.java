@@ -6,6 +6,7 @@ import org.junit.Test;
 import java.math.BigDecimal;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class ConversionUtilsTest extends UnitTest {
 
@@ -84,6 +85,54 @@ public class ConversionUtilsTest extends UnitTest {
 
         // then
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void percentageOfValueGivenOneHoundredPercentageThenReturnsValue() {
+        // given
+        BigDecimal value = new BigDecimal("200");
+        BigDecimal percentage = new BigDecimal("100");
+
+        // when
+        BigDecimal actual = ConversionUtils.percentageOfValue(value, percentage);
+
+        // then
+        BigDecimal expected = new BigDecimal("200");
+        assertTrue(expected.compareTo(actual) == 0);
+    }
+
+    @Test
+    public void percentageOfValueGivenPercentageAndValueThenReturnsPercentageOfValue() {
+        // given
+        BigDecimal value = new BigDecimal("200");
+        BigDecimal percentage = new BigDecimal("20");
+
+        // when
+        BigDecimal actual = ConversionUtils.percentageOfValue(value, percentage);
+
+        // then
+        BigDecimal expected = new BigDecimal("40");
+        assertTrue(expected.compareTo(actual) == 0);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void percentageOfValueGivenNullValueThenNPE() {
+        // given
+        BigDecimal value = null;
+        BigDecimal percentage = new BigDecimal("20");
+
+        // when
+        ConversionUtils.percentageOfValue(value, percentage);
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void percentageOfValueGivenNullPercentageThenNPE() {
+        // given
+        BigDecimal value = new BigDecimal("20");
+        BigDecimal percentage = null;
+
+        // when
+        ConversionUtils.percentageOfValue(value, percentage);
     }
 
     @Test(expected = NullPointerException.class)

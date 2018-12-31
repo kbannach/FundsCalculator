@@ -5,6 +5,7 @@ import java.math.RoundingMode;
 
 public abstract class ConversionUtils {
 
+    private static final BigDecimal ONE_HUNDRED = new BigDecimal(100);
     private static final int DEFAULT_PRECISION = 2;
     public static final RoundingMode DEFAULT_ROUNDING_MODE = RoundingMode.DOWN;
 
@@ -31,5 +32,9 @@ public abstract class ConversionUtils {
 
     public static BigDecimal round(BigDecimal percentageToRound) {
         return percentageToRound.setScale(DEFAULT_PRECISION, DEFAULT_ROUNDING_MODE);
+    }
+
+    public static BigDecimal percentageOfValue(BigDecimal value, BigDecimal percentage) {
+        return value.multiply(percentage).divide(ONE_HUNDRED, RoundingMode.HALF_DOWN);
     }
 }
