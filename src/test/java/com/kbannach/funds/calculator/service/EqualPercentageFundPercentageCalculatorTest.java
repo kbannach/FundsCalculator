@@ -1,7 +1,6 @@
 package com.kbannach.funds.calculator.service;
 
 import com.kbannach.UnitTest;
-import com.kbannach.funds.calculator.api.CalculationResult;
 import com.kbannach.funds.calculator.entity.Fund;
 import com.kbannach.funds.calculator.service.definition.InvestmentStyleDefinition;
 import com.kbannach.funds.calculator.service.percentage.calculator.EqualPercentageFundPercentageCalculator;
@@ -13,11 +12,11 @@ import org.mockito.Mock;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.kbannach.funds.calculator.utils.ConversionUtils.toBigDecimal;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -58,10 +57,10 @@ public class EqualPercentageFundPercentageCalculatorTest extends UnitTest {
         Set<Fund> funds = Collections.emptySet();
 
         // when
-        CalculationResult calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, Fund.Kind.PL, STYLE_DEFINITION);
+        Map<Fund, BigDecimal> calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, Fund.Kind.PL, STYLE_DEFINITION);
 
         // then
-        Set<Fund> evaluatedFunds = calculationResult.getFundCalculationResults().keySet();
+        Set<Fund> evaluatedFunds = calculationResult.keySet();
         assertTrue(evaluatedFunds.isEmpty());
     }
 
@@ -75,10 +74,10 @@ public class EqualPercentageFundPercentageCalculatorTest extends UnitTest {
         Set<Fund> funds = new HashSet<>(Arrays.asList(plFirst, plSecond, plThird, forFirst));
 
         // when
-        CalculationResult calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, Fund.Kind.PL, STYLE_DEFINITION);
+        Map<Fund, BigDecimal> calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, Fund.Kind.PL, STYLE_DEFINITION);
 
         // then
-        Set<Fund> evaluatedFunds = calculationResult.getFundCalculationResults().keySet();
+        Set<Fund> evaluatedFunds = calculationResult.keySet();
         assertThat(evaluatedFunds, containsInAnyOrder(plFirst, plSecond, plThird));
         assertThat(evaluatedFunds, not(containsInAnyOrder(forFirst)));
     }
@@ -93,22 +92,17 @@ public class EqualPercentageFundPercentageCalculatorTest extends UnitTest {
         HashSet<Fund> funds = new HashSet<>(Arrays.asList(plFirst, plSecond, plThird));
 
         // when
-        CalculationResult calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, kind, STYLE_DEFINITION);
+        Map<Fund, BigDecimal> calculationResult = equalPercentageFundPercentageCalculator.calculateByFundsKind(funds, kind, STYLE_DEFINITION);
 
         // then
-        List<BigDecimal> percentages = calculationResult.getFundCalculationResults()
-                .values()
-                .stream()
-                .map(CalculationResult.FundCalculationResult::getPercentage)
-                .collect(Collectors.toList());
-        BigDecimal p = percentages.get(0);
+        Collection<BigDecimal> percentages = calculationResult.values();
+        assertTrue(percentages.iterator().hasNext());
+        BigDecimal p = percentages.iterator().next();
 
         assertThat(percentages, everyItem(is(p)));
 
         BigDecimal actualSum = percentages.stream()
-                .reduce(BigDecimal.ZERO,
-                        BigDecimal::add,
-                        BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal expectedTotalPercentage = STYLE_DEFINITION.getTotalPercentageByKind(kind);
         BigDecimal divisor = toBigDecimal(3);

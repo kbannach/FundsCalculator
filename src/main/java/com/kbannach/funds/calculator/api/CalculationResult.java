@@ -1,7 +1,10 @@
 package com.kbannach.funds.calculator.api;
 
 import com.kbannach.funds.calculator.entity.Fund;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
@@ -14,6 +17,9 @@ public class CalculationResult {
 
     @Getter
     @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class FundCalculationResult {
 
         private BigDecimal amount;
@@ -21,7 +27,7 @@ public class CalculationResult {
     }
 
     private Map<Fund, FundCalculationResult> fundCalculationResults = new HashMap<>();
-    private BigDecimal unassignedAmount;
+    private BigDecimal unassignedAmount = BigDecimal.ZERO;
 
     public void addFundCalculation(Fund fund, BigDecimal percentage) {
 

@@ -1,12 +1,13 @@
 package com.kbannach.funds.calculator.service.percentage.calculator;
 
-import com.kbannach.funds.calculator.api.CalculationResult;
 import com.kbannach.funds.calculator.entity.Fund;
 import com.kbannach.funds.calculator.service.definition.InvestmentStyleDefinition;
 import com.kbannach.funds.calculator.service.percentage.corrector.PercentageCorrector;
 import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -19,18 +20,18 @@ public class EqualPercentageFundPercentageCalculator implements FundPercentageCa
 
     private PercentageCorrector percentageCorrector;
 
-    public CalculationResult calculateByFundsKind(Set<Fund> allFunds, Fund.Kind kind, InvestmentStyleDefinition styleDefinition) {
+    public Map<Fund, BigDecimal> calculateByFundsKind(Set<Fund> allFunds, Fund.Kind kind, InvestmentStyleDefinition styleDefinition) {
 
         Set<Fund> fundsByKind = findFundsByKind(allFunds, kind);
         if (fundsByKind.isEmpty()) {
-            return new CalculationResult();
+            return new HashMap<>(0);
         }
 
-        CalculationResult result = new CalculationResult();
         BigDecimal totalPercentage = styleDefinition.getTotalPercentageByKind(kind);
-
         BigDecimal equalPercentage = calculatePercentageToSet(fundsByKind.size(), totalPercentage);
-        fundsByKind.forEach(f -> result.addFundCalculation(f, equalPercentage));
+
+        Map<Fund, BigDecimal> result = new HashMap<>(allFunds.size());
+        fundsByKind.forEach(f -> result.put(f, equalPercentage));
 
         percentageCorrector.correctPercentage(result, totalPercentage);
         return result;

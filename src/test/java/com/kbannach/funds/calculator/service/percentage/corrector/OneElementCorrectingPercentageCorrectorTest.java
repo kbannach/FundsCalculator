@@ -1,14 +1,13 @@
-package com.kbannach.funds.calculator.service;
+package com.kbannach.funds.calculator.service.percentage.corrector;
 
 import com.kbannach.UnitTest;
-import com.kbannach.funds.calculator.api.CalculationResult;
 import com.kbannach.funds.calculator.entity.Fund;
-import com.kbannach.funds.calculator.service.percentage.corrector.OneElementCorrectingPercentageCorrector;
-import com.kbannach.funds.calculator.service.percentage.corrector.PercentageSumExceededException;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 
 import java.math.BigDecimal;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import static com.kbannach.funds.calculator.utils.ConversionUtils.toBigDecimal;
@@ -51,23 +50,17 @@ public class OneElementCorrectingPercentageCorrectorTest extends UnitTest {
 
     private void performTest(BigDecimal sumUpTo, BigDecimal fundPercentage) {
         // given
-        CalculationResult toCorrect = new CalculationResult();
-        toCorrect.addFundCalculation(FIRST_FUND, fundPercentage);
-        toCorrect.addFundCalculation(SECOND_FUND, fundPercentage);
-        toCorrect.addFundCalculation(THIRD_FUND, fundPercentage);
+        Map<Fund, BigDecimal> toCorrect = new HashMap<>(3);
+        toCorrect.put(FIRST_FUND, fundPercentage);
+        toCorrect.put(SECOND_FUND, fundPercentage);
+        toCorrect.put(THIRD_FUND, fundPercentage);
 
         // when
         oneElementCorrectingPercentageCorrector.correctPercentage(toCorrect, sumUpTo);
 
         // then
-        Map<Fund, CalculationResult.FundCalculationResult> results = toCorrect.getFundCalculationResults();
-        BigDecimal total = results.values()
-                .stream()
-                .reduce(
-                        BigDecimal.ZERO,
-                        (sum, next) -> sum.add(next.getPercentage()),
-                        BigDecimal::add
-                );
+        Collection<BigDecimal> results = toCorrect.values();
+        BigDecimal total = results.stream().reduce(BigDecimal.ZERO, BigDecimal::add);
 
         assertBigDecimalValues(total, sumUpTo);
     }
